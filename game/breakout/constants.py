@@ -20,21 +20,22 @@ BALL_VEL_Y  = -4  # negativo = subindo
 
 # raquete
 PADDLE_WIDTH  = 100
-PADDLE_HEIGHT = 12
+PADDLE_HEIGHT = 35
 PADDLE_SPEED  = 6
-PADDLE_Y      = HEIGHT - 50
+PADDLE_Y      = HEIGHT - 150
 
-# blocos
-BLOCK_ROWS     = 5
-BLOCK_COLS     = 10
-BLOCK_WIDTH    = 68
-BLOCK_HEIGHT   = 22
-BLOCK_GAP_X    = 5
-BLOCK_GAP_Y    = 5
-BLOCK_OFFSET_X = 26
-BLOCK_OFFSET_Y = 60
 
-BLOCK_POINTS = 10
+# # blocos
+# BLOCK_ROWS     = 5
+# BLOCK_COLS     = 10
+# BLOCK_WIDTH    = 68
+# BLOCK_HEIGHT   = 22
+# BLOCK_GAP_X    = 5
+# BLOCK_GAP_Y    = 5
+# BLOCK_OFFSET_X = 26
+# BLOCK_OFFSET_Y = 60
 
-# TODO: adicionar cor por linha quando criar block.py
+# BLOCK_POINTS = 10
+
+# # TODO: adicionar cor por linha quando criar block.py
 # TODO: talvez aumentar velocidade da bola conforme pontuação sobe
