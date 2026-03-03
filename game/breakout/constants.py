@@ -15,16 +15,15 @@ FPS = 60
 
 # bola
 BALL_RADIUS = 8
-BALL_VEL_X  = 0
-BALL_VEL_Y  = 0  # negativo = subindo
+BALL_VEL_X  = 4
+BALL_VEL_Y  = -6  # negativo = subindo
 
 # raquete
 PADDLE_WIDTH  = 100
 PADDLE_HEIGHT = 35
-PADDLE_SPEED  = 6
+PADDLE_SPEED  = 25
 PADDLE_Y      = HEIGHT - 40
 
-GRAVITY = 10
 
 # # blocos
 # BLOCK_ROWS     = 5

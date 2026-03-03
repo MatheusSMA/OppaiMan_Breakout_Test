@@ -1,6 +1,5 @@
 default paddle_width = 100
 default paddle_height = 15
-default ball_gravity = 1
 
 init python:
     import pygame
@@ -21,10 +20,10 @@ init python:
             
             keys = pygame.key.get_pressed()
             self.paddle.update(keys, dt)
-            self.ball.update(dt, ball_gravity)
-            
-            if self.paddle.rect.collidepoint(self.ball.x, self.ball.y+self.ball.radius):
-                self.ball.vy = -abs(self.ball.vy)  # só inverte pra cima
+            self.ball.update(dt, self.paddle.rect)
+
+            if self.ball.launched and self.paddle.rect.collidepoint(self.ball.x, self.ball.y + self.ball.radius):
+                self.ball.vy = -abs(self.ball.vy)
             
             self.paddle.rect.width = renpy.store.paddle_width
             self.paddle.rect.height = renpy.store.paddle_height
@@ -59,8 +58,11 @@ init python:
             return rv
 
         def event(self, ev, x, y, st):
-            if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
-                return True
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_ESCAPE:
+                    return True
+                if ev.key == pygame.K_SPACE and not self.ball.launched:
+                    self.ball.launch()
             raise renpy.IgnoreEvent()
 
 
@@ -84,10 +86,6 @@ screen game_settings():
             text _("[paddle_width]px")
             label _("Height")
             bar value VariableValue("paddle_height", range=25,offset=5,step=5)
-            text _("[paddle_height]px")           
-            label _("Ball")
-            label _("Gravity")
-            bar value VariableValue("ball_gravity", range=30,offset=0,step=5)
-            text _("[ball_gravity]px/s²")
+            text _("[paddle_height]px")                       
              
             
