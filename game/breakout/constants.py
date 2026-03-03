@@ -22,7 +22,7 @@ BALL_VEL_Y  = -4  # negativo = subindo
 PADDLE_WIDTH  = 100
 PADDLE_HEIGHT = 35
 PADDLE_SPEED  = 6
-PADDLE_Y      = HEIGHT - 150
+PADDLE_Y      = HEIGHT - 40
 
 
 # # blocos

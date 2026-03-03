@@ -304,12 +304,14 @@ screen navigation():
         else:
 
             textbutton _("History") action ShowMenu("history")
-
+            
             textbutton _("Save") action ShowMenu("save")
 
         textbutton _("Load") action ShowMenu("load")
 
         textbutton _("Preferences") action ShowMenu("preferences")
+
+        textbutton _("Game Settings") action ShowMenu("game_settings")
 
         if _in_replay:
 
@@ -318,7 +320,7 @@ screen navigation():
         elif not main_menu:
 
             textbutton _("Main Menu") action MainMenu()
-
+        
         textbutton _("About") action ShowMenu("about")
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
