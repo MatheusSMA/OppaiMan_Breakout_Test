@@ -1,3 +1,3 @@
 from .paddle import Paddle
-from .square import Square
+from .ball import Ball
 

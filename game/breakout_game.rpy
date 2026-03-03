@@ -1,26 +1,31 @@
 default paddle_width = 100
 default paddle_height = 15
+default ball_gravity = 1
 
 init python:
     import pygame
     from breakout import constants as C
-    from breakout.entities import Paddle, Square
+    from breakout.entities import Paddle, Ball
 
     class BreakoutScreen(renpy.Displayable):
         def __init__(self):
             super(BreakoutScreen, self).__init__()
-            self.paddle = Paddle()
-            self.square = Square()
+            self.paddle = Paddle()            
+            self.ball = Ball()
             self.last_st = None
         
         def render(self, width, height, st, at):
             dt = (st - self.last_st) if self.last_st is not None else 0.016
-            dt = min(dt, 0.05)  # cap pra não explodir se o jogo travar
+            dt = min(dt, 0.005)  # cap pra não explodir se o jogo travar
             self.last_st = st
-
+            
             keys = pygame.key.get_pressed()
             self.paddle.update(keys, dt)
-
+            self.ball.update(dt, ball_gravity)
+            
+            if self.paddle.rect.collidepoint(self.ball.x, self.ball.y+self.ball.radius):
+                self.ball.vy = -abs(self.ball.vy)  # só inverte pra cima
+            
             self.paddle.rect.width = renpy.store.paddle_width
             self.paddle.rect.height = renpy.store.paddle_height
             self.paddle.rect.right = min(C.WIDTH, self.paddle.rect.right) # evita que a raquete passe da borda direita quando aumentar de tamanho.            
@@ -36,21 +41,20 @@ init python:
             canvas.rect(gui.idle_color, (ox, oy, width, height))
             
             # converte coordenadas do jogo pra coordenadas de tela
+            # p = paddle, b = ball
             r = self.paddle.rect
-            sx = int(r.x * scale_x) + ox
-            sy = int(r.y * scale_y) + oy
-            sw = int(r.width  * scale_x)
-            sh = int(r.height * scale_y)
-            
-            r2 = self.square.rect
-            sx2 = int(r2.x * scale_x) + ox
-            sy2 = int(r2.y * scale_y) + oy
-            sw2 = int(r2.width  * scale_x)
-            sh2 = int(r2.height * scale_y)
-            
-            canvas.rect(C.RED, (sx2, sy2, sw2, sh2))            
-            canvas.rect(gui.accent_color, (sx, sy, sw, sh))
-            
+            px = int(r.x * scale_x) + ox
+            py = int(r.y * scale_y) + oy
+            pw = int(r.width  * scale_x)
+            ph = int(r.height * scale_y)            
+                                            
+            canvas.rect(gui.accent_color, (px, py, pw, ph))
+
+            bx = int(self.ball.x * scale_x)
+            by = int(self.ball.y * scale_y)
+            br = int(self.ball.radius * min(scale_x, scale_y))
+            canvas.circle(C.RED, (bx, by), br)
+    
             renpy.redraw(self, 0)
             return rv
 
@@ -81,4 +85,9 @@ screen game_settings():
             label _("Height")
             bar value VariableValue("paddle_height", range=25,offset=5,step=5)
             text _("[paddle_height]px")           
+            label _("Ball")
+            label _("Gravity")
+            bar value VariableValue("ball_gravity", range=30,offset=0,step=5)
+            text _("[ball_gravity]px/s²")
+             
             
