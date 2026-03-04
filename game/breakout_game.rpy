@@ -4,13 +4,14 @@ default paddle_height = 15
 init python:
     import pygame
     from breakout import constants as C
-    from breakout.entities import Paddle, Ball
+    from breakout.entities import Paddle, Ball, HitBox
 
     class BreakoutScreen(renpy.Displayable):
         def __init__(self):
             super(BreakoutScreen, self).__init__()
             self.paddle = Paddle()
             self.ball   = Ball()
+            self.hitBox = HitBox()
             self.last_st = None
 
         def render(self, width, height, st, at):
@@ -45,6 +46,13 @@ init python:
             pw = int(r.width  * scale_x)
             ph = int(r.height * scale_y)
             canvas.rect(gui.accent_color, (px, py, pw, ph))
+
+            h  = self.hitBox.rect
+            hx = int(h.x      * scale_x)
+            hy = int(h.y      * scale_y)
+            hw = int(h.width  * scale_x)
+            hh = int(h.height * scale_y)
+            canvas.rect(gui.selected_color, (hx, hy, hw, hh))
 
             bx = int(self.ball.x      * scale_x)
             by = int(self.ball.y      * scale_y)
