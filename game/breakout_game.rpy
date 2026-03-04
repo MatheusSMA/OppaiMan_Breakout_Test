@@ -28,6 +28,8 @@ init python:
                 if self.paddle.rect.collidepoint(self.ball.x, self.ball.y + self.ball.radius):
                     self.ball.bounce_paddle(self.paddle)
 
+            self.hitBox.check_collision(self.ball)
+
             self.paddle.rect.width  = renpy.store.paddle_width
             self.paddle.rect.height = renpy.store.paddle_height
             self.paddle.rect.right  = min(C.WIDTH, self.paddle.rect.right)
@@ -47,12 +49,13 @@ init python:
             ph = int(r.height * scale_y)
             canvas.rect(gui.accent_color, (px, py, pw, ph))
 
-            h  = self.hitBox.rect
-            hx = int(h.x      * scale_x)
-            hy = int(h.y      * scale_y)
-            hw = int(h.width  * scale_x)
-            hh = int(h.height * scale_y)
-            canvas.rect(gui.selected_color, (hx, hy, hw, hh))
+            if self.hitBox.active:
+                h  = self.hitBox.rect
+                hx = int(h.x      * scale_x)
+                hy = int(h.y      * scale_y)
+                hw = int(h.width  * scale_x)
+                hh = int(h.height * scale_y)
+                canvas.rect(gui.selected_color, (hx, hy, hw, hh))
 
             bx = int(self.ball.x      * scale_x)
             by = int(self.ball.y      * scale_y)

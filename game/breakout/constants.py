@@ -3,8 +3,8 @@ WIDTH  = 800
 HEIGHT = 600
 
 # bola
-BALL_RADIUS       = 8
-BALL_SPEED        = 7    # velocidade total (px/frame a 60fps)
+BALL_RADIUS       = 6
+BALL_SPEED        = 5    # velocidade total (px/frame a 60fps)
 BALL_LAUNCH_ANGLE = 35   # graus a partir do eixo vertical (positivo = direita)
 
 # raquete
