@@ -12,3 +12,10 @@ PADDLE_WIDTH  = 100
 PADDLE_HEIGHT = 35
 PADDLE_SPEED  = 8
 PADDLE_Y      = HEIGHT - 40
+
+# blocos
+BLOCK_W        = 75
+BLOCK_H        = 20
+BLOCK_GAP      = 3   # espaço entre blocos
+BLOCK_OFFSET_X = 12  # margem esquerda (centraliza na tela)
+BLOCK_OFFSET_Y = 60  # distância do topo
