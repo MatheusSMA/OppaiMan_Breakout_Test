@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from PIL import Image; img = Image.open\\(''c:/Users/mathe/Desktop/OppaiMan_Breakout/OppaiMan_Breakout_Test/game/images/BreakOut Assets x2.png''\\); print\\(''Size:'', img.size\\); print\\(''Mode:'', img.mode\\)\")",
+      "Bash(py -c \":*)"
+    ]
+  }
+}

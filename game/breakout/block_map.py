@@ -27,10 +27,6 @@ class BlockMap:
                         DialogueTriggerBlock(x, y, C.BLOCK_W, C.BLOCK_H,
                                              trigger_id, dialogue_manager, pt)
                     )
-                elif cls is Block:
-                    half_h = C.BLOCK_H // 2
-                    self.blocks.append(cls(x, y,          C.BLOCK_W, half_h, pt))
-                    self.blocks.append(cls(x, y + half_h, C.BLOCK_W, half_h, None))
                 else:
                     self.blocks.append(cls(x, y, C.BLOCK_W, C.BLOCK_H, pt))
 
@@ -38,15 +34,18 @@ class BlockMap:
 
     def check_collisions(self, balls):
         points = 0
+        bounced_this_frame = set()   # bola só muda direção uma vez por frame
         for block in self.blocks:
             if not block.active:
                 continue
             for ball in balls:
-                spawned = block.check_collision(ball)
+                already_bounced = ball in bounced_this_frame
+                spawned = block.check_collision(ball, suppress_bounce=already_bounced)
                 if spawned:
                     self.powerups.append(spawned)
                 if not block.active:
                     points += self.POINTS_PER_BLOCK
+                    bounced_this_frame.add(ball)
                     break
         return points
 

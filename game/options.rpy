@@ -14,6 +14,9 @@
 
 define config.name = _("OppaiMan_Breakout_Test")
 
+## Desabilita reload automático de scripts durante o jogo (evita reset de estado)
+define config.autoreload = False
+
 
 ## Determines if the title given above is shown on the main menu screen. Set
 ## this to False to hide the title.

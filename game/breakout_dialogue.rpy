@@ -120,12 +120,8 @@ label breakout_final_scene:
     pause 2.0
     hide text
 
-    show text "{color=#00ff00}PRÓXIMO CANDIDATO{/color}" with dissolve
-    pause 2.5
-    hide text
-
     pause 0.8
     scene black with dissolve
     pause 1.0
-
+    
     $ renpy.full_restart()
