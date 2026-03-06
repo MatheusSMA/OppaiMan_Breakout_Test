@@ -1,10 +1,10 @@
-import math
-from breakout import constants as C
+﻿import math
+from breakout.config import constants as C
 from breakout.entities.powerups.powerup_base import PowerUp
 
 
 class SpeedBall(PowerUp):
-    """Acelera todas as bolas (máx 3× a velocidade base) por 10 segundos."""
+    """Acelera todas as bolas (max 3x a velocidade base) por 10 segundos."""
     TIER     = "negative"
     DURATION = 10.0
 

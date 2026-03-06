@@ -1,4 +1,4 @@
-import math
+﻿import math
 import pygame
 from breakout import constants as C
 from breakout.entities.core.bricks.block import Block
@@ -6,12 +6,6 @@ from breakout.entities.core.bricks.tough_block import ToughBlock
 from breakout.entities.powerups import WidenPaddle, ShrinkPaddle, SpeedBall, SlowBall, MultiBall, Shooter
 
 
-# ---------------------------------------------------------------------------
-# Level data
-# ---------------------------------------------------------------------------
-
-# 0 = empty, 1 = normal block
-# 2..7 = powerup blocks, 8 = tough block
 POWERUP_MAP = {
     2: WidenPaddle,
     3: SlowBall,
@@ -43,22 +37,14 @@ MAP_2 = [
 ]
 
 
-# ---------------------------------------------------------------------------
-# LevelManager — constrói e gerencia blocos de uma fase
-# ---------------------------------------------------------------------------
-
 POINTS_PER_BLOCK = 10
 
 
 class LevelManager:
-    """Responsável por construir e gerenciar os blocos de uma fase.
+    """Responsavel por construir e gerenciar os blocos de uma fase."""
 
-    Absorve a lógica de BlockMap e os dados de levels.py.
-    """
-
-    def __init__(self, phase=1, dialogue_manager=None):
+    def __init__(self, phase=1):
         self.powerups = []
-        self.dialogue_manager = dialogue_manager
         grid = MAP_1 if phase == 1 else MAP_2
         self.blocks = self._build_blocks(grid)
 
@@ -75,14 +61,10 @@ class LevelManager:
                 blocks.append(block_class(block_x, block_y, C.BLOCK_W, C.BLOCK_H, powerup_type))
         return blocks
 
-    # ------------------------------------------------------------------
-    # Collision checks — retornam pontos ganhos no frame
-    # ------------------------------------------------------------------
-
     def check_collisions(self, balls):
-        """Checa colisão bola-bloco. Retorna pontos e spawn de powerups."""
+        """Checa colisao bola-bloco. Retorna pontos e spawn de powerups."""
         points = 0
-        # cada bola só muda direção uma vez por frame
+        # cada bola so muda direcao uma vez por frame
         bounced_this_frame = set()
         for block in self.blocks:
             if not block.active:
@@ -99,7 +81,7 @@ class LevelManager:
         return points
 
     def check_bullet_collisions(self, bullets):
-        """Checa colisão bala-bloco. Retorna pontos e spawn de powerups."""
+        """Checa colisao bala-bloco. Retorna pontos e spawn de powerups."""
         points = 0
         for block in self.blocks:
             if not block.active:
@@ -117,12 +99,12 @@ class LevelManager:
 
     @property
     def all_destroyed(self):
-        """True quando todos os blocos estão inativos."""
+        """True quando todos os blocos estao inativos."""
         return all(not b.active for b in self.blocks)
 
     @property
     def destruction_ratio(self):
-        """Fração de blocos destruídos (0.0 a 1.0)."""
+        """Fracao de blocos destruidos (0.0 a 1.0)."""
         total = len(self.blocks)
         if total == 0:
             return 0.0

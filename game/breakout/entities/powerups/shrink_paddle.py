@@ -1,9 +1,9 @@
-from breakout import constants as C
+﻿from breakout.config import constants as C
 from breakout.entities.powerups.powerup_base import PowerUp
 
 
 class ShrinkPaddle(PowerUp):
-    """Encolhe a raquete (desce um nível de tamanho)."""
+    """Encolhe a raquete (desce um nivel de tamanho)."""
     TIER = "negative"
 
     def apply(self, paddle, balls):

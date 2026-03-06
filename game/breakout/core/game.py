@@ -10,8 +10,6 @@ from breakout.entities.core.paddle import Paddle
 from breakout.entities.core.ball import Ball
 from breakout.entities.powerups.shooter_powerup.bullet import Bullet
 from breakout.managers.level import LevelManager
-from breakout.managers.collision import CollisionManager
-from breakout.managers.powerup_manager import PowerupManager
 
 
 # Thresholds para dialogues de milestone
@@ -27,14 +25,14 @@ class BreakoutGame:
     """
 
     def __init__(self, game_state, dialogue_manager, registry,
-                 collision_mgr=None, level_mgr=None, powerup_mgr=None):
-        self.game_state = game_state
-        self.dm         = dialogue_manager
-        self.registry   = registry
+                 collision_mgr, level_mgr, powerup_mgr):
+        self.game_state       = game_state
+        self.dialogue_manager = dialogue_manager
+        self.registry         = registry
 
-        self.collision_mgr = collision_mgr or CollisionManager()
-        self.level_mgr     = level_mgr or LevelManager(phase=1)
-        self.powerup_mgr   = powerup_mgr or PowerupManager()
+        self.collision_mgr = collision_mgr
+        self.level_mgr     = level_mgr
+        self.powerup_mgr   = powerup_mgr
 
         self.paddle  = Paddle()
         self.balls   = [Ball()]
@@ -45,7 +43,7 @@ class BreakoutGame:
         self.result_triggered = False
         self.result_signal    = None
 
-        self.dm.enqueue("intro")
+        self.dialogue_manager.enqueue("intro")
 
     # ------------------------------------------------------------------
     # Loop principal
@@ -65,7 +63,7 @@ class BreakoutGame:
 
         # Dispara próxima sequência de diálogo se houver
         if not self.game_state.paused:
-            if self.dm.tick():
+            if self.dialogue_manager.tick():
                 return "dialogue"
 
         if self.game_state.paused:
@@ -122,8 +120,8 @@ class BreakoutGame:
 
     def _cleanup_inactive(self):
         # powerup_mgr já limpou powerups; aqui limpa bolas e balas
-        self.balls   = [ball    for ball   in self.balls    if not ball.launched or ball.y < C.HEIGHT + ball.radius]
-        self.bullets = [bullet  for bullet in self.bullets  if bullet.active]
+        self.balls   = [ball   for ball   in self.balls   if not ball.launched or ball.y < C.HEIGHT + ball.radius]
+        self.bullets = [bullet for bullet in self.bullets if bullet.active]
 
     def _clamp_paddle(self):
         self.paddle.rect.width = C.PADDLE_SIZES[self.paddle.size_idx]
@@ -140,11 +138,11 @@ class BreakoutGame:
         if game_state.phase == 1:
             if not game_state.part2_done and destruction_ratio >= _PART2_THRESHOLD:
                 game_state.part2_done = True
-                self.dm.enqueue("part2")
+                self.dialogue_manager.enqueue("part2")
         else:
             if not game_state.part4_done and destruction_ratio >= _PART4_THRESHOLD:
                 game_state.part4_done = True
-                self.dm.enqueue("part4")
+                self.dialogue_manager.enqueue("part4")
 
     def _evaluate_win_lose(self):
         if not self.balls:
@@ -155,7 +153,7 @@ class BreakoutGame:
 
     def _phase_complete_signal(self):
         """Retorna sinal só quando não há diálogos pendentes."""
-        if self.dm.is_playing or not self.dm.queue.is_empty():
+        if self.dialogue_manager.is_playing or not self.dialogue_manager.queue.is_empty():
             return None
         signal = "phase1_complete" if self.game_state.phase == 1 else "phase2_complete"
         return self._trigger(signal)
@@ -172,7 +170,7 @@ class BreakoutGame:
     def advance_to_phase2(self):
         """Reseta estado para fase 2. Chamado pelo game_loop após part3."""
         self.game_state.phase = 2
-        self.level_mgr        = LevelManager(phase=2, dialogue_manager=self.dm)
+        self.level_mgr        = LevelManager(phase=2)
         self.balls            = [Ball()]
         self.bullets          = []
         self.result_triggered = False

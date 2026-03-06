@@ -1,4 +1,4 @@
-import pygame
+﻿import pygame
 
 
 class Block:
@@ -7,12 +7,7 @@ class Block:
         self.active       = True
         self.powerup_type = powerup_type  # classe do powerup, instanciada ao ser coletado
 
-    # ------------------------------------------------------------------
-    # Interface pública — usada pelo LevelManager
-    # ------------------------------------------------------------------
-
     def check_collision(self, ball, suppress_bounce=False):
-        """Verifica colisão bola-bloco. Retorna PowerUp instanciado ou None."""
         if not self.active or not self._overlaps_ball(ball):
             return None
         if not suppress_bounce:
@@ -20,7 +15,6 @@ class Block:
         return self._on_hit()
 
     def check_bullet_hit(self, bullet):
-        """Bala destrói o bloco sem ricochete. Retorna PowerUp ou None."""
         if not self.active or not bullet.active:
             return None
         bullet_rect = pygame.Rect(
@@ -32,12 +26,8 @@ class Block:
         bullet.active = False
         return self._on_hit()
 
-    # ------------------------------------------------------------------
-    # Helpers — subclasses podem sobrescrever apenas _on_hit()
-    # ------------------------------------------------------------------
-
     def _overlaps_ball(self, ball):
-        """AABB grosseira + distância exata ao centro do bloco."""
+        """AABB grosseira + distancia exata ao centro do bloco."""
         ball_rect = pygame.Rect(
             ball.x - ball.radius, ball.y - ball.radius,
             ball.radius * 2,      ball.radius * 2,
@@ -50,7 +40,7 @@ class Block:
         return distance_sq < ball.radius ** 2
 
     def _bounce_ball(self, ball):
-        """Reflete a bola no eixo com menor sobreposição (lateral vs topo)."""
+        """Reflete a bola no eixo com menor sobreposicao (lateral vs topo)."""
         overlap_x = (ball.radius + self.rect.width  / 2) - abs(ball.x - self.rect.centerx)
         overlap_y = (ball.radius + self.rect.height / 2) - abs(ball.y - self.rect.centery)
         if overlap_x < overlap_y:
@@ -59,8 +49,13 @@ class Block:
             ball.vy = -ball.vy
 
     def _on_hit(self):
-        """Destrói o bloco e retorna powerup se houver. Sobrescreva em subclasses."""
+        """Destroi o bloco e retorna powerup se houver. Sobrescreva em subclasses."""
         self.active = False
         if self.powerup_type:
             return self.powerup_type(self.rect.centerx, self.rect.centery)
+        return None
+
+    @property
+    def damage_stage(self):
+        """None para blocos normais -- sem estados de dano."""
         return None

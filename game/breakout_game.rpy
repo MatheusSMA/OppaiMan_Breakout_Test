@@ -1,18 +1,21 @@
-default paddle_width  = 100
+﻿default paddle_width  = 100
 default paddle_height = 15
 default breakout_score = 0
 
 init python:
     import pygame
-    from breakout.config.game_state  import GameState
-    from breakout.story.dialogue     import DialogueManager
-    from breakout.story.sequences    import build_registry
-    from breakout.core.game     import BreakoutGame
-    from breakout.core.renderer import BreakoutRenderer
+    from breakout.config.game_state      import GameState
+    from breakout.story.dialogue         import DialogueManager
+    from breakout.story.sequences        import build_registry
+    from breakout.core.game              import BreakoutGame
+    from breakout.core.renderer          import BreakoutRenderer
+    from breakout.managers.collision     import CollisionManager
+    from breakout.managers.level         import LevelManager
+    from breakout.managers.powerup_manager import PowerupManager
     from breakout import constants as C
 
     _BLOCK_ANIM_FPS  = 6
-    _BLOCK_ANIM_LEN  = 6   # frames na animação de bloco
+    _BLOCK_ANIM_LEN  = 6
 
     _game_state      = GameState()
     _breakout_screen = None
@@ -32,24 +35,27 @@ init python:
             super(BreakoutScreen, self).__init__()
             registry = build_registry()
             dm       = DialogueManager(_game_state, registry)
-            self._game     = BreakoutGame(_game_state, dm, registry)
+            self._game     = BreakoutGame(
+                _game_state, dm, registry,
+                collision_mgr=CollisionManager(),
+                level_mgr=LevelManager(phase=1),
+                powerup_mgr=PowerupManager(),
+            )
             self._renderer = BreakoutRenderer()
-            self._registry = registry   # exposto para game_loop labels
+            self._registry = registry
 
-            self.last_st       = None
+            self.last_st        = None
             self.pending_signal = None
-            self.anim_timer    = 0.0
-            self.anim_frame    = 0
-            self.powerup_frame = 0
+            self.anim_timer     = 0.0
+            self.anim_frame     = 0
+            self.powerup_frame  = 0
 
             renpy.store._breakout_dm = dm
 
-        # Wrapper usado pelo game_loop (labels) para acesso fácil
         def _advance_to_phase2(self):
             self._game.advance_to_phase2()
             self.last_st = None
 
-        # ----------------------------------------------------------
         def render(self, width, height, st, at):
             delta_time = max(0.0, min(
                 (st - self.last_st) if self.last_st is not None else 0.016,
@@ -57,21 +63,19 @@ init python:
             ))
             self.last_st = st
 
-            scale_x = width  / C.WIDTH
-            scale_y = height / C.HEIGHT
-            rv      = renpy.Render(width, height)
-            bg      = Transform("images/ui/GameBG.png", xysize=(width, height))
-            rv.blit(renpy.render(bg, width, height, st, at), (0, 0))
-            canvas  = rv.canvas()
+            scale_x       = width  / C.WIDTH
+            scale_y       = height / C.HEIGHT
+            render_target = renpy.Render(width, height)
+            bg            = Transform("images/ui/GameBG.png", xysize=(width, height))
+            render_target.blit(renpy.render(bg, width, height, st, at), (0, 0))
+            canvas = render_target.canvas()
 
-            # Congelado após um resultado — aguarda event() disparar
             if self._game.result_triggered:
-                self._renderer.render_frame(rv, canvas, self._game, scale_x, scale_y,
+                self._renderer.render_frame(render_target, canvas, self._game, scale_x, scale_y,
                                             st, at, self.anim_frame, self.powerup_frame)
                 renpy.redraw(self, 0)
-                return rv
+                return render_target
 
-            # Roda update do jogo e captura sinal
             if not _game_state.paused:
                 signal = self._game.update(delta_time, pygame.key.get_pressed())
                 if signal:
@@ -79,27 +83,25 @@ init python:
                     self.last_st = None
                     pygame.event.post(pygame.event.Event(pygame.USEREVENT))
 
-                # Avança animação só quando rodando
                 self.anim_timer += delta_time
                 if self.anim_timer >= 1.0 / _BLOCK_ANIM_FPS:
                     self.anim_timer    = 0.0
                     self.anim_frame    = (self.anim_frame    + 1) % _BLOCK_ANIM_LEN
                     self.powerup_frame = (self.powerup_frame + 1) % _BLOCK_ANIM_LEN
 
-            self._renderer.render_frame(rv, canvas, self._game, scale_x, scale_y,
+            self._renderer.render_frame(render_target, canvas, self._game, scale_x, scale_y,
                                         st, at, self.anim_frame, self.powerup_frame)
-            self._draw_score(rv, width, st, at)
+            self._draw_score(render_target, width, st, at)
 
             renpy.redraw(self, 0.1 if _game_state.paused else 0)
-            return rv
+            return render_target
 
-        def _draw_score(self, rv, width, st, at):
+        def _draw_score(self, render_target, width, st, at):
             score_text   = Text("Score: " + str(self._game.score))
             score_render = renpy.render(score_text, width, 60, st, at)
-            rv.blit(score_render, (width // 2 - score_render.width // 2, 15))
+            render_target.blit(score_render, (width // 2 - score_render.width // 2, 15))
             renpy.store.breakout_score = self._game.score
 
-        # ----------------------------------------------------------
         def event(self, ev, x, y, st):
             if self.pending_signal:
                 signal = self.pending_signal
@@ -138,7 +140,7 @@ screen breakout_pause_menu():
             text "PAUSA" xalign 0.5 size 40
             null height 10
             textbutton "Retomar"        action Return("resume") xalign 0.5
-            textbutton "Opções"         action ShowMenu("preferences") xalign 0.5
+            textbutton "Opcoes"         action ShowMenu("preferences") xalign 0.5
             textbutton "Menu Principal" action MainMenu() xalign 0.5
             textbutton "Sair"           action Quit(confirm=False) xalign 0.5
 
@@ -146,13 +148,12 @@ screen breakout_pause_menu():
 label breakout_game:
     $ breakout_score = 0
     $ _game_state.reset()
-    $ _reset_breakout_screen()   # fresh instance for new game
+    $ _reset_breakout_screen()
 
     label .game_loop:
         call screen breakout
 
         if _return == "dialogue":
-            # Jogo congelado no master layer — sem redraw contínuo, física não roda
             show expression _get_breakout_screen() as breakout_frozen
             call breakout_dialogue_show
             hide breakout_frozen
@@ -160,7 +161,6 @@ label breakout_game:
             $ _get_breakout_screen().last_st = None
             jump .game_loop
         elif _return == "phase1_complete":
-            # Fase 1 zerada — dispara part3 diretamente e avança para fase 2
             $ _game_state.part3_done = True
             $ _game_state.current_dialogue = _get_breakout_screen()._registry.get("part3")
             $ _game_state.paused = True
@@ -168,10 +168,9 @@ label breakout_game:
             call breakout_dialogue_show
             hide breakout_frozen
             $ _game_state.paused = False
-            $ _get_breakout_screen()._advance_to_phase2()   # já reseta last_st internamente
+            $ _get_breakout_screen()._advance_to_phase2()
             jump .game_loop
         elif _return == "phase2_complete":
-            # Todos os blocos da fase 2 destruídos — dispara o plot twist diretamente
             $ _game_state.part5_done = True
             $ _game_state.current_dialogue = _get_breakout_screen()._registry.get("part5")
             $ _game_state.paused = True
@@ -201,7 +200,7 @@ label breakout_win:
 
 
 label breakout_lose:
-    "Todas as bolas caíram... Tente de novo."
+    "Todas as bolas cairam... Tente de novo."
     jump breakout_submit_score
 
 
