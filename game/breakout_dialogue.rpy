@@ -12,12 +12,12 @@ define aria = Character("ARIA", color="#ff88cc")
 # ---------------------------------------------------------------------------
 # Imagens dos sprites (declaradas para o sistema show/hide do Ren'Py)
 # ---------------------------------------------------------------------------
-image kai  normal   = "images/kai_normal.png"
-image kai  confused = "images/kai_confused.png"
-image kai  shocked  = "images/kai_shocked.png"
-image aria normal   = "images/aria_normal.png"
-image aria happy    = "images/aria_happy.png"
-image aria evil     = "images/aria_evil.png"
+image kai  normal   = "images/characters/kai_normal.png"
+image kai  confused = "images/characters/kai_confused.png"
+image kai  shocked  = "images/characters/kai_shocked.png"
+image aria normal   = "images/characters/aria_normal.png"
+image aria happy    = "images/characters/aria_happy.png"
+image aria evil     = "images/characters/aria_evil.png"
 
 # ---------------------------------------------------------------------------
 # Label principal — recebe a sequência de _game_state.current_dialogue
@@ -94,7 +94,7 @@ default _breakout_dm = None
 # Cena final — OPPAIMAN SYSTEMS
 # ---------------------------------------------------------------------------
 label breakout_final_scene:
-    scene expression Transform("images/FinalBG.png", xysize=(config.screen_width, config.screen_height)) with dissolve
+    scene expression Transform("images/ui/FinalBG.png", xysize=(config.screen_width, config.screen_height)) with dissolve
     pause 1.5
 
     show text "{color=#00ff00}OPPAIMAN SYSTEMS{/color}" with dissolve

@@ -5,7 +5,7 @@ All dialogue sequences are defined here, verbatim from the script.
 Import build_registry() to get a dict ready for DialogueManager.
 """
 
-from breakout.dialogue import DialogueLine, DialogueSequence
+from .dialogue import DialogueLine, DialogueSequence
 
 
 # ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ INTRO = _seq(
     ("ARIA", "aria_normal.png",  "Este é apenas um teste simples de reflexos e lógica."),
     ("ARIA", "aria_normal.png",  "Quebre todos os blocos para continuar."),
     ("Kai",  "kai_confused.png", "...Um jogo de quebrar blocos?"),
-    ("Kai",  "kai_confused.png", "Essa empresa é estranha."),
+    ("Kai",  "kai_confused.png", "Que estranho..."),
 )
 
 # Part 2 — Something strange (some blocks broken)
@@ -62,7 +62,7 @@ PART4 = _seq(
     ("ARIA", "aria_normal.png",  "Eles falharam no teste."),
     ("Kai",  "kai_confused.png", "Falharam?"),
     ("Kai",  "kai_confused.png", "Ou foram removidos?"),
-    ("ARIA", "aria_normal.png",  "Continue jogando."),
+    ("ARIA", "aria_normal.png",  "Continue."),
 )
 
 # Part 5 — Plot twist (last block of phase 2)

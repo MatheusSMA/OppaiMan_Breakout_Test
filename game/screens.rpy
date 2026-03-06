@@ -345,7 +345,7 @@ screen main_menu():
     ## This ensures that any other menu screen is replaced.
     tag menu
 
-    add "images/MenuBG.png" xalign 0.5 yalign 0.5 fit "cover"
+    add "images/ui/MenuBG.png" xalign 0.5 yalign 0.5 fit "cover"
 
     ## This empty frame darkens the main menu.
     frame:

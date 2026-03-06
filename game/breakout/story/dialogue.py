@@ -103,7 +103,6 @@ class DialogueManager:
         paused=False is set by the game_loop label after the post-dialogue freeze.
         """
         self.is_playing = False
-        # If more sequences are queued, tick() will pick them up next frame.
 
     # ------------------------------------------------------------------
     # Internal

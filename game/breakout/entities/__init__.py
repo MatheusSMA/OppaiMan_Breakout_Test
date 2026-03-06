@@ -1,7 +1,5 @@
-from .paddle                  import Paddle
-from .ball                    import Ball
-from .block                   import Block
-from .tough_block             import ToughBlock
-from .bullet                  import Bullet
-from .powerup                 import PowerUp, WidenPaddle, SlowBall, Shooter
-from .dialogue_trigger_block  import DialogueTriggerBlock
+from .core.paddle               import Paddle
+from .core.ball                 import Ball
+from .core.bricks               import Block, ToughBlock
+from .powerups.powerup_base     import PowerUp
+from .powerups                  import WidenPaddle, ShrinkPaddle, SpeedBall, SlowBall, Shooter, MultiBall, Bullet
