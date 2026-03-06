@@ -155,7 +155,7 @@ label breakout_game:
 
         if _return == "dialogue":
             show expression _get_breakout_screen() as breakout_frozen
-            call breakout_dialogue_show
+            call breakout_dialogue_show from _call_breakout_dialogue_show
             hide breakout_frozen
             $ _game_state.paused = False
             $ _get_breakout_screen().last_st = None
@@ -165,7 +165,7 @@ label breakout_game:
             $ _game_state.current_dialogue = _get_breakout_screen()._registry.get("part3")
             $ _game_state.paused = True
             show expression _get_breakout_screen() as breakout_frozen
-            call breakout_dialogue_show
+            call breakout_dialogue_show from _call_breakout_dialogue_show_1
             hide breakout_frozen
             $ _game_state.paused = False
             $ _get_breakout_screen()._advance_to_phase2()
@@ -175,7 +175,7 @@ label breakout_game:
             $ _game_state.current_dialogue = _get_breakout_screen()._registry.get("part5")
             $ _game_state.paused = True
             show expression _get_breakout_screen() as breakout_frozen
-            call breakout_dialogue_show
+            call breakout_dialogue_show from _call_breakout_dialogue_show_2
             hide breakout_frozen
             $ _game_state.paused = False
             jump breakout_win
