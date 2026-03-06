@@ -40,3 +40,19 @@ class Block:
         if self.powerup_type:
             return self.powerup_type(self.rect.centerx, self.rect.centery)
         return None
+
+    def check_bullet_hit(self, bullet):
+        """Bala destrói o bloco sem ricochetear. Retorna PowerUp ou None."""
+        if not self.active or not bullet.active:
+            return None
+        b_rect = pygame.Rect(
+            bullet.x - bullet.radius, bullet.y - bullet.radius,
+            bullet.radius * 2,        bullet.radius * 2
+        )
+        if not self.rect.colliderect(b_rect):
+            return None
+        self.active   = False
+        bullet.active = False
+        if self.powerup_type:
+            return self.powerup_type(self.rect.centerx, self.rect.centery)
+        return None

@@ -5,7 +5,11 @@ from breakout import constants as C
 class Paddle:
     def __init__(self):
         x = (C.WIDTH - C.PADDLE_WIDTH) // 2
-        self.rect = pygame.Rect(x, C.PADDLE_Y, C.PADDLE_WIDTH, C.PADDLE_HEIGHT)
+        self.rect            = pygame.Rect(x, C.PADDLE_Y, C.PADDLE_WIDTH, C.PADDLE_HEIGHT)
+        self.size_idx        = C.PADDLE_DEFAULT_SIZE_IDX
+        self.shooter_active   = False
+        self.shots_remaining  = 0
+        self.fire_cooldown    = 0.0
     
     def update(self, keys, dt):
         # multiplica por 60 pra manter a velocidade igual independente do fps
@@ -19,6 +23,9 @@ class Paddle:
         # não deixa sair da tela
         self.rect.left  = max(0, self.rect.left)
         self.rect.right = min(C.WIDTH, self.rect.right)
+
+        if self.shooter_active and self.fire_cooldown > 0:
+            self.fire_cooldown -= dt
 
     def draw(self, surface):
         pygame.draw.rect(surface, C.WHITE, self.rect)

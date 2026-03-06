@@ -4,12 +4,15 @@ from breakout import constants as C
 
 class Ball:
     def __init__(self):
-        self.radius   = C.BALL_RADIUS
-        self.x        = C.WIDTH // 2
-        self.y        = 0
-        self.vx       = 0
-        self.vy       = 0
-        self.launched = False
+        self.radius      = C.BALL_RADIUS
+        self.x           = C.WIDTH // 2
+        self.y           = 0
+        self.vx          = 0
+        self.vy          = 0
+        self.launched    = False
+        self.speed_state = "normal"   # "normal" | "fast" | "slow"
+        self.speed_timer = 0.0        # segundos restantes do efeito
+        self.ball_type   = "normal"   # "normal" | "clone"
 
     def launch(self):
         angle     = math.radians(C.BALL_LAUNCH_ANGLE)
@@ -36,15 +39,26 @@ class Ball:
         self.x += self.vx * dt * 60
         self.y += self.vy * dt * 60
 
-        # colisão paredes laterais
-        if self.x - self.radius <= 0:
-            self.x  = self.radius
+        # timer de efeito de velocidade
+        if self.speed_timer > 0:
+            self.speed_timer -= dt
+            if self.speed_timer <= 0:
+                self.speed_timer = 0.0
+                speed = math.sqrt(self.vx ** 2 + self.vy ** 2)
+                if speed > 0:
+                    self.vx = self.vx / speed * C.BALL_SPEED
+                    self.vy = self.vy / speed * C.BALL_SPEED
+                self.speed_state = "normal"
+
+        # colisão paredes laterais (respeita borda do GameBG)
+        if self.x - self.radius <= C.PLAY_BORDER:
+            self.x  = C.PLAY_BORDER + self.radius
             self.vx = abs(self.vx)
-        elif self.x + self.radius >= C.WIDTH:
-            self.x  = C.WIDTH - self.radius
+        elif self.x + self.radius >= C.WIDTH - C.PLAY_BORDER:
+            self.x  = C.WIDTH - C.PLAY_BORDER - self.radius
             self.vx = -abs(self.vx)
 
-        # colisão teto
-        if self.y - self.radius <= 0:
-            self.y  = self.radius
+        # colisão teto (respeita borda do GameBG)
+        if self.y - self.radius <= C.PLAY_BORDER:
+            self.y  = C.PLAY_BORDER + self.radius
             self.vy = abs(self.vy)
